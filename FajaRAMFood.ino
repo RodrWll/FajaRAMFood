@@ -111,9 +111,6 @@ int h=0;
 void loop()
 {
 
-    // Manejar solicitudes del cliente
-    server.handleClient();
-    // Verificar si hay datos por el puerto serial
     VerificarDatosXPuertoSerial();
     if(onMotor){
 
@@ -140,6 +137,9 @@ void loop()
 
 }
 void VerificarDatosXPuertoSerial(){
+    // Manejar solicitudes del cliente
+    server.handleClient();
+    // Verificar si hay datos por el puerto serial
     while (Serial.available())
         {
             char c = Serial.read();
