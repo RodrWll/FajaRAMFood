@@ -114,78 +114,19 @@ void loop()
     // Manejar solicitudes del cliente
     server.handleClient();
     // Verificar si hay datos por el puerto serial
-    while (Serial.available())
-    {
-        char c = Serial.read();
-        if (c == '0' || c == '1')
-        {
-            datosSerial = c;
-            // datosSerial += "\n";
-            Serial.println(c);
-
-
-            if(c=='1'){
-              onMotor=1;
-              setMotor(1);
-            }else{
-              onMotor=0;
-              setMotor(0);
-            }
-            
-        }else{
-
-        }
-
-        // Led();
-    }
+    VerificarDatosXPuertoSerial();
     if(onMotor){
-      int delayActual= listaTiempos[h];     
 
+      int delayActual= listaTiempos[h];     
       EncenderMotor();
       delay(delayActual);
       ApagarMotor();
       delay(delayActual);
-      if(h>=7){
-        h=0;
-      }else{
-        h++;
-      }
-      int aux1=0;
-      int aux2=0;
-      for(int i=0;i<4;i++){
-        aux1=Mesa[i];
-        if(i==0){
-          Mesa[i]=0;
-
-        }else{
-          Mesa[i]= aux2;
-        }
-        
-        aux2=aux1;
-
-      }
+      AumentarH();
+      DesplazarValoresLista();
       ShowValuesMesa();
       CheckCoincidencia();
-      for(int j=3; j>0; j--){
-        if(CoincideMesas[j]){
-          switch(j){
-          case 1:
-            digitalWrite(MESA1, HIGH);
-
-          break;
-          
-          case 2:
-            digitalWrite(MESA2, HIGH);
-        
-          break;
-          case 3:
-            digitalWrite(MESA3, HIGH);
-          break;      
-
-          }
-        
-        }
-      }
+      EncenderLedxCoincidencia();
       delay(2000);
       digitalWrite(MESA1, LOW);
       digitalWrite(MESA2, LOW);
@@ -198,7 +139,40 @@ void loop()
 
 
 }
+void VerificarDatosXPuertoSerial(){
+    while (Serial.available())
+        {
+            char c = Serial.read();
+            if (c == '0' || c == '1')
+            {
+                datosSerial = c;
+                // datosSerial += "\n";
+                Serial.println(c);
 
+
+                if(c=='1'){
+                  onMotor=1;
+                  setMotor(1);
+                }else{
+                  onMotor=0;
+                  setMotor(0);
+                }
+                
+            }else{
+
+            }
+
+            // Led();
+        }
+
+}
+void AumentarH(){
+  if(h>=7){
+    h=0;
+  }else{
+    h++;
+    }
+}
 void handleRoot()
 {
     // Enviar encabezado HTTP
@@ -327,6 +301,48 @@ void setMotor(int onMotor)
     {
         ApagarMotor();
     }
+}
+void DesplazarValoresLista(){
+      int aux1=0;
+      int aux2=0;
+      for(int i=0;i<4;i++){
+        aux1=Mesa[i];
+        if(i==0){
+          Mesa[i]=0;
+
+        }else{
+          Mesa[i]= aux2;
+        }
+        
+        aux2=aux1;
+
+      }
+
+}
+
+void EncenderLedxCoincidencia(){
+
+      for(int j=3; j>0; j--){
+        if(CoincideMesas[j]){
+          switch(j){
+          case 1:
+            digitalWrite(MESA1, HIGH);
+
+          break;
+          
+          case 2:
+            digitalWrite(MESA2, HIGH);
+        
+          break;
+          case 3:
+            digitalWrite(MESA3, HIGH);
+          break;      
+
+          }
+        
+        }
+      }
+
 }
 
 
